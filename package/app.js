@@ -17,14 +17,14 @@ function hasz (word) {
 
 function trim (name) {
   var splitName = name.split('|');
-  return splitName[0].replace(' ', '_').replace('&nbsp;', '_');
+  return splitName[0].replace(' ', '_').replace('&nbsp;', '_').replace('%20', '_');
 }
 
 dbHandler.connect((err)=> {
     if(err) {
     return console.log("Error");
   } else {
-    reqHandler.fetchData("Adolf Hitler");
+    reqHandler.fetchData(trim("Adolf Hitler"), 1); //pierwszy request, jeszczenie wiem czym jest zmienna "num" i czemu podaję ją do fetchData ale muszę się napić kawy pomocy
   }
 })
 
