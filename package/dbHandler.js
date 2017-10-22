@@ -12,17 +12,20 @@ function connect (callback) {
 
 
 function add (name, dis, id) { //jeszcze nie wiem czy id to będzie hash czy kolejność dodawania, hash bardzo ułatwi sprawdzenie czy artykuł nie był dodany wcześniej, a id - znalezienie tego z najm. odległością od Hitlera.
-  if ( /*nie ma w db czegoś o tym id*/ true){
-    database.collection('AustriackiAkwarelista').insertOne({
-       _id: id,
-       name: name,
-       checked: false,
-       distance: dis
-    }, (err, result) => {
-      if (err){
-        return console.log('DB error: ' + err)
-      }
-    });
+  if(name.indexOf('Category:') != 0 && name.indexOf('File:') != 0)
+    {
+      if ( /*nie ma w db czegoś o tym id*/ true){
+      database.collection('AustriackiAkwarelista').insertOne({
+         _id: id,
+         name: name,
+         checked: false,
+         distance: dis
+      }, (err, result) => {
+        if (err){
+          return console.log('DB error: ' + err)
+        }
+      });
+    }
   }
 }
 

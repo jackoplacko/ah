@@ -17,7 +17,7 @@ function hasz (word) {
 
 function trim (name) {
   var splitName = name.split('|');
-  return splitName[0].replace(' ', '_');
+  return splitName[0].replace(' ', '_').replace('&nbsp;', '_');
 }
 
 dbHandler.connect((err)=> {
