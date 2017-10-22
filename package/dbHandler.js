@@ -1,13 +1,14 @@
 const MongoClient = require('mongodb').MongoClient;
+
 var database;
 
-MongoClient.connect("mongodb://localhost:27017/adolf", (err, db) => {
-  if(err) {
-    return console.log("Error");
-  }
-  console.log ("Connected to database");
-  database = db;
-});
+function connect (callback) {
+    MongoClient.connect("mongodb://localhost:27017/adolf", (err, db) => {
+    console.log ("Connected to database");
+    database = db;
+    callback(err);
+  });
+}
 
 
 function add (name, dis, id) { //jeszcze nie wiem czy id to będzie hash czy kolejność dodawania, hash bardzo ułatwi sprawdzenie czy artykuł nie był dodany wcześniej, a id - znalezienie tego z najm. odległością od Hitlera.
@@ -32,5 +33,6 @@ function dbClose () {
 
 module.exports = {
   add,
+  connect,
   dbClose
 };
