@@ -1,27 +1,15 @@
 const request = require('request');
+const dbHandler = require('./dbHandler.js');
 
 var distance = 0;
-var next = process.argv[2];
 
-//fauxDB:
-var DB = new Array();
-for (var i = 0; i < 1000; i++)
-    DB.push(new Object());
 
-// var fauxDB = {
-//   hash:[2000],
-//   name: [],
-//   distance:[],
-//   childrenChecked: [],
-//   children: []
-// };
 
 function hasz (word) {
   var hash = 0;
 	for (i = 0; i < word.length; i++) {
 		char = word.charCodeAt(i);
-		// hash = ((hash<<5)-hash)+char;
-    hash+=char/10;
+		hash = ((hash<<5)-hash)+char;
 		hash = hash & hash;
 	}
 	return hash;
@@ -29,9 +17,8 @@ function hasz (word) {
 
 function trim (name) {
   var splitName = name.split('|');
-  return splitName[0].replace(' ', '_');;
+  return splitName[0].replace(' ', '_');
 }
-
 
 
 function fetchData (name, hsh) {
@@ -42,19 +29,15 @@ function fetchData (name, hsh) {
       var txt = JSON.stringify(body);
       var newTxt = txt.split('[[');
       for (var i = 1; i < newTxt.length; i++) {
-        DB[hsh].children.push(newTxt[i].split(']]')[0]);
-        console.log(DB[hsh].children[i-1]);
+        dbHandler.add(newTxt[i].split(']]')[0], 1);
+        console.log(newTxt[i].split(']]')[0]);
       }
   });
 }
 
+//zanim się odpali pierwsze fetchData trzeba zaczekać aż się zainicjalizuje baza danych
+//// chyba trzeba będzie to rozbić na 3+ pliki albo robić cały program w callbacku funkcji, czyli takie mocne -25 do czytelności
+fetchData('Adolf Hitler'); //tu trzeba odpalać fetchData od artykułu z najmniejszą odległością od Hitlera w pętli
 
-for (var i = 0; i<1; i++){
-  nexthash = hasz(next);
-  if(DB[nexthash].dist == undefined){
-    DB[nexthash].dist = distance;
-    DB[nexthash].children = new Array();
-    fetchData(trim(next), nexthash);
-  }
-  //else
-}
+
+dbHandler.dbClose();
