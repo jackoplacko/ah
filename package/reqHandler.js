@@ -1,6 +1,8 @@
 const request = require('request');
 const dbHandler = require('./dbHandler.js');
 
+const redirect = '#REDIRECT [[';
+
 var fetchData = (name, dst) => {
   return new Promise((resolve, reject) => {
     request({
@@ -11,15 +13,14 @@ var fetchData = (name, dst) => {
         reject(console.log(error));
       }
         var txt = JSON.stringify(body);
-        if (txt.indexOf('#REDIRECT [[') == -1){
+        if (txt.indexOf(redirect) == -1){
           var newTxt = txt.split('[[');
           for (var i = 1; i < newTxt.length; i++) {
             dbHandler.add(newTxt[i].split(']]')[0], dst);
-          console.log(newTxt[i].split(']]')[0]);
           }
           resolve(true);
         } else {
-          fetchData(txt.split('#REDIRECT [[')[1].split(']]')[0], dst).then(()=>{resolve(true)});
+          fetchData(txt.split(redirect)[1].split(']]')[0], dst).then(()=>{resolve(true)});
         }
     });
   })
