@@ -1,41 +1,56 @@
 const MongoClient = require('mongodb').MongoClient;
 
-var database;
+var col;
 
 function connect (callback) {
     MongoClient.connect("mongodb://localhost:27017/adolf", (err, db) => {
     console.log ("Connected to database");
-    database = db;
+    col = db.collection('AustriackiAkwarelista')
     callback(err);
   });
 }
 
 
-function add (name, dis, id) { //jeszcze nie wiem czy id to będzie hash czy kolejność dodawania, hash bardzo ułatwi sprawdzenie czy artykuł nie był dodany wcześniej, a id - znalezienie tego z najm. odległością od Hitlera.
-  if(name.indexOf('Category:') != 0 && name.indexOf('File:') != 0)
-    {
-      if ( /*nie ma w db czegoś o tym id*/ true){
-      database.collection('AustriackiAkwarelista').insertOne({
-         _id: id,
-         name: name,
-         checked: false,
-         distance: dis
-      }, (err, result) => {
-        if (err){
-          return console.log('DB error: ' + err)
+
+var getUnchckd = () => {
+  return new Promise((resolve, reject) => {
+    col.findOne({checked: false}).then((doc) => {
+      resolve(doc);
+    }, (err) =>{
+      reject(err);
+    });
+  });
+};
+
+
+var add = (newname, dis) => {
+  return new Promise((resolve, reject) => {
+    if(newname.indexOf('Category:') != 0 && newname.indexOf('File:') != 0)
+      {
+        col.findOne({name: newname}).then((doc) => {
+          if (doc == null){
+          col.insertOne({
+             name: newname,
+             checked: false,
+             distance: dis + 1
+          }, (err, result) => {
+            if (err){
+              reject(console.log('DB error: ' + err));
+            }
+            resolve(true)
+          });
         }
+      }, (error) => {
+        reject(console.log(error));
       });
     }
-  }
-}
+  });
+};
 
-function dbClose () {
-  database.close();
-}
 
 
 module.exports = {
   add,
-  connect,
-  dbClose
+  getUnchckd,
+  connect
 };

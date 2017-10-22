@@ -2,18 +2,19 @@ const dbHandler = require('./dbHandler.js');
 const reqHandler = require('./reqHandler.js');
 
 var distance = 0;
+var next = "Adolf Hitler";
 
 
-
-function hasz (word) {
-  var hash = 0;
-	for (i = 0; i < word.length; i++) {
-		char = word.charCodeAt(i);
-		hash = ((hash<<5)-hash)+char;
-		hash = hash & hash;
-	}
-	return hash;
-}
+//
+// function hasz (word) {
+//   var hash = 0;
+// 	for (i = 0; i < word.length; i++) {
+// 		char = word.charCodeAt(i);
+// 		hash = ((hash<<5)-hash)+char;
+// 		hash = hash & hash;
+// 	}
+// 	return hash;
+// }
 
 function trim (name) {
   var splitName = name.split('|');
@@ -22,14 +23,15 @@ function trim (name) {
 
 dbHandler.connect((err)=> {
     if(err) {
-    return console.log("Error");
+    return console.log("Can't connect to db" + err);
   } else {
-    reqHandler.fetchData(trim("Adolf Hitler"), 1); //pierwszy request, jeszczenie wiem czym jest zmienna "num" i czemu podaję ją do fetchData ale muszę się napić kawy pomocy
+    reqHandler.fetchData(trim(next), distance).then(()=>{
+      dbHandler.getUnchckd().then((doc)=> {
+        distance = doc.distance;
+        console.log(distance);
+      }, (findError)=> {
+        console.log(findError);
+      });
+    });
   }
-})
-
-
-//tu trzeba odpalać fetchData od niesprawdzonego artykułu z najmniejszą odległością od Hitlera w pętli, aż do?
-setTimeout(() => { //wykonać po zakończeniu pętli i dodaniu wszystkich rekordów do db
-  dbHandler.dbClose()
-}, 5000);
+});
