@@ -6,7 +6,7 @@ var next = "Adolf Hitler";
 
 function trim (name) {
   var splitName = name.split('|');
-  return splitName[0].replace(' ', '_').replace('&nbsp;', '_').replace('%20', '_');
+  return splitName[0].replace(/ /g, '_').replace(/&nbsp;/g, '_').replace(/%20/g, '_');
 }
 
 async function doTheLoop(){
