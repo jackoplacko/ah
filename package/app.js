@@ -10,12 +10,13 @@ function trim (name) {
 }
 
 async function doTheLoop(){
-  for(var i = 0; i < 6e6; i++) {
+  for(var i = 0; i < Number.MAX_SAFE_INTEGER; i++) {
     await reqHandler.fetchData(trim(next), distance).then(()=>{
         dbHandler.getUnchckd().then((doc) => {
           dbHandler.update(doc).then(() => {
             distance = doc.distance;
             next = doc.name;
+            console.log(`next ${next} dist ${distance}`);
           });
         });
       });

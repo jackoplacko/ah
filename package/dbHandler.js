@@ -40,25 +40,23 @@ var getUnchckd = () => {
 
 var add = (newname, dis) => {
   return new Promise((resolve, reject) => {
-    if(newname.indexOf('Category:') != 0 && newname.indexOf('File:') != 0)
-      {
-        col.findOne({name: newname}).then((doc) => {
-          if (doc == null){
-          col.insertOne({
-             name: newname,
-             checked: false,
-             distance: dis + 1
-          }, (err, result) => {
-            if (err){
-              reject(console.log('DB error: ' + err));
-            }
-            resolve(true)
-          });
-        }
-      }, (error) => {
-        reject(console.log(error));
-      });
-    }
+    console.log("adding:", newname);
+      col.findOne({name: newname}).then((doc) => {
+        if (doc == null){
+        col.insertOne({
+           name: newname,
+           checked: false,
+           distance: dis + 1
+        }, (err, result) => {
+          if (err){
+            reject(console.log('DB error: ' + err));
+          }
+          resolve(true)
+        });
+      }
+    }, (error) => {
+      reject(console.log(error));
+    });
   });
 };
 

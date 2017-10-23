@@ -18,12 +18,18 @@ var fetchData = (name, dst) => {
         reject(console.log(error));
       }
         var txt = JSON.stringify(body);
-        if (txt.indexOf(redirect) != -1){
+        if (txt == undefined) {
+          fetchData(name, dst).then(()=>{resolve(true)});
+        } else if (txt.indexOf(redirect) != -1){
           fetchData(txt.split(redirect)[1].split(']]')[0], dst).then(()=>{resolve(true)});
         } else {
           var newTxt = txt.split('[[');
           for (var i = 1; i < newTxt.length; i++) {
-            dbHandler.add(trim(newTxt[i].split(']]')[0]), dst);
+            var newnewtxt = trim(newTxt[i].split(']]')[0]);
+            if (newnewtxt.indexOf("File:") == -1 && newnewtxt.indexOf("Category:") == -1 && newnewtxt.indexOf("Image:") ==1){
+              console.log("waiting for wikipedia: ", newnewtxt);
+              dbHandler.add,(newnewtxt, dst);
+            }
           }
           resolve(true);
         }
